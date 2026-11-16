@@ -52,6 +52,17 @@
   注间重号上限，并同样显示每注理由、一键复制；历史表格 2948 期（2007-05-30 起），
   走势页含前区频次、后区频次、前区和值走势，另附单注期望回报估算。
 
+## 下载
+
+打包好的 Windows 版本在 [Releases](https://github.com/Urtaome0211/RedBlueLab/releases)：
+
+| 文件 | 说明 |
+| --- | --- |
+| `RedBlueLab-v1.0-win64-folder.zip` | **推荐**。解压后双击 `RedBlueLab\RedBlueLab.exe`，启动最快、不写临时目录 |
+| `RedBlueLab-onefile.exe` | 单文件版，首次启动要把自身解压到 `%LOCALAPPDATA%\RedBlueLab\tmp` |
+
+想自己构建就看下面的「方式二」与「方式三」。
+
 ## 快速开始
 
 ### 方式一：直接运行（无需安装 Python）
