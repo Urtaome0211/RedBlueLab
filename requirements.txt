@@ -1,0 +1,22 @@
+# 桌面应用运行依赖（Python 3.10+，Windows 实测 3.12）
+# 安装： .venv\Scripts\python.exe -m pip install -r requirements.txt
+#
+# 说明：
+#  - 用 PySide6-Essentials 而不是 PySide6 元包，可少装 QtWebEngine（约 130MB）。
+#  - PySideSix-Frameless-Window 是 PySide6-Fluent-Widgets 的隐式依赖，
+#    缺少时会报 ModuleNotFoundError: No module named 'qframelesswindow'。
+#  - 抓取只用到标准库 urllib，不需要 requests。
+
+PySide6-Essentials==6.12.0
+PySide6-Fluent-Widgets==1.11.3
+PySideSix-Frameless-Window==0.8.2
+pywin32==312; sys_platform == "win32"
+darkdetect==0.8.0
+
+pyqtgraph==0.14.0
+pandas==3.1.1
+numpy==2.5.4
+openpyxl==3.1.5
+
+# 仅打包用
+pyinstaller==6.22.3

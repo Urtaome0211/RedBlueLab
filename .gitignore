@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 虚拟环境与工具链
+.venv/
+.wheels/
+build/
+build-onefile/
+dist/
+*.spec
+
+# 本地产物 / 缓存
+cache/
+picks.json
+config.json
+crash.log
+*.log
+.selftest_home/
+.tmp_home/
+.runtime/
+
+# 数据集：只提交最终 CSV，原始分页与 Excel 由脚本生成
+data/*.json
+data/*.xlsx
+data/raw/
+data/dlt_raw/
