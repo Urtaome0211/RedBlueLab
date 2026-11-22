@@ -1,4 +1,4 @@
-# 打包桌面应用，产物：
+﻿# 打包桌面应用，产物：
 #   dist\RedBlueLab\RedBlueLab.exe       文件夹版（推荐：不写临时目录，启动快，最稳）
 #   dist\RedBlueLab-onefile.exe          单文件版（首次启动解压到 %LOCALAPPDATA%\RedBlueLab\tmp）
 # 用法：pwsh -File build_exe.ps1
@@ -13,6 +13,18 @@ $common = @(
     "--add-data", "data\raw;seed\raw",
     "--add-data", "data\dlt_history.csv;seed",
     "--add-data", "data\dlt_raw;seed\dlt_raw",
+    "--add-data", "data\kl8_history.csv;seed",
+    "--add-data", "data\fc3d_history.csv;seed",
+    "--add-data", "data\qlc_history.csv;seed",
+    "--add-data", "data\qxc_history.csv;seed",
+    "--add-data", "data\pl3_history.csv;seed",
+    "--add-data", "data\pl5_history.csv;seed",
+    "--add-data", "data\kl8_raw;seed\kl8_raw",
+    "--add-data", "data\fc3d_raw;seed\fc3d_raw",
+    "--add-data", "data\qlc_raw;seed\qlc_raw",
+    "--add-data", "data\qxc_raw;seed\qxc_raw",
+    "--add-data", "data\pl3_raw;seed\pl3_raw",
+    "--add-data", "data\pl5_raw;seed\pl5_raw",
     "--hidden-import", "pyqtgraph",
     "--hidden-import", "pyqtgraph.graphicsItems",
     "--exclude-module", "PySide6.QtWebEngineCore",
@@ -26,6 +38,12 @@ $common = @(
 Write-Host "[1/4] 同步数据集..." -ForegroundColor Cyan
 & $python build_dataset.py
 & $python -m dlt.build
+& $python -m games.build qlc
+& $python -m games.build kl8
+& $python -m games.build fc3d
+& $python -m games.build qxc
+& $python -m games.build pl3
+& $python -m games.build pl5
 
 if (-not (Test-Path "assets\app.ico")) {
     Write-Host "生成图标..." -ForegroundColor Cyan

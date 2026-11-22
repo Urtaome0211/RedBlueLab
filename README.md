@@ -1,13 +1,13 @@
-# RedBlue Lab · 双色球 + 超级大乐透分析助手
+# RedBlue Lab · 八彩种开奖数据分析助手
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB.svg)](https://www.python.org/)
 [![Qt](https://img.shields.io/badge/UI-PySide6%20%2B%20Fluent-41CD52.svg)](https://pypi.org/project/PySide6-Fluent-Widgets/)
-[![Release](https://img.shields.io/badge/Release-v1.0-1F6FD0.svg)](https://github.com/Urtaome0211/RedBlueLab/releases)
+[![Release](https://img.shields.io/badge/Release-v2.0-1F6FD0.svg)](https://github.com/Urtaome0211/RedBlueLab/releases)
 
-抓取中国福利彩票双色球、中国体育彩票超级大乐透的往期开奖数据，并做成一个 **Qt-Fluent 桌面应用**：
-浏览历史、看走势分布，基于历史统计生成下注推荐（双色球还能算覆盖保底、按条件筛号、自动记账复盘），
-一键抓取新开奖。
+抓取**双色球、快乐8、福彩3D、七乐彩、超级大乐透、7星彩、排列3、排列5** 的往期开奖数据，
+做成一个 **Qt-Fluent 桌面应用**：浏览历史、基于历史统计生成下注推荐（双色球还能算覆盖保底、
+按条件筛号、自动记账复盘），一键抓取新开奖。
 
 > 彩票开奖是独立随机事件，**任何选号方法都不能提高中奖概率**。本工具只做历史数据统计、
 > 组合过滤与展示，供研究/娱乐使用。请理性购彩。
@@ -28,6 +28,16 @@
 | --- | --- | --- |
 | ![大乐透推荐](docs/screenshots/10_dlt_recommend.png) | ![大乐透历史](docs/screenshots/11_dlt_data.png) | ![大乐透走势](docs/screenshots/12_dlt_chart.png) |
 
+**新增彩种**（快乐8 / 福彩3D / 七乐彩 / 7星彩 / 排列3 / 排列5）：
+
+| 快乐8（选十） | 福彩3D | 七乐彩 |
+| --- | --- | --- |
+| ![快乐8](docs/screenshots/15_kl8_rec.png) | ![福彩3D](docs/screenshots/16_fc3d_rec.png) | ![七乐彩](docs/screenshots/17_qlc_rec.png) |
+
+| 7星彩 | 排列5 历史数据 |
+| --- | --- |
+| ![7星彩](docs/screenshots/18_qxc_rec.png) | ![排列5](docs/screenshots/20_pl5_data.png) |
+
 ## 功能
 
 - **号码推荐**：三种算法随时切换——「统计打分」（按历史频次 + 遗漏加权抽样，含热号理由）、
@@ -46,8 +56,16 @@
 - **走势分布**：红球和值走势（叠加历史均值与 P10–P90 区间）、红球/蓝球出现频次、
   当前遗漏期数四张图，可缩放平移。
 - **设置**：冷热倾向、和值区间、奇偶比、三区个数、注间重合上限、连号组数、最小跨度、
-  蓝球策略；参数持久化到 `config.json`，并可重建数据集 / 运行校验 / 打开数据目录。
-- **超级大乐透**（侧栏「大乐透」分组）：独立的抓取 / 推荐 / 历史 / 走势 ——
+  蓝球策略；参数持久化到 `config.json`，并可重建数据集 / 运行校验 / 打开数据目录；
+  数据集卡片会列出八个彩种各自的期数与最近更新时间。
+- **导航按彩种收纳**：侧栏只有「福彩」（双色球 / 快乐8 / 福彩3D / 七乐彩）和
+  「体彩」（超级大乐透 / 7星彩 / 排列3 / 排列5）两组共 8 个彩种，进到彩种后
+  用右上角「模块」下拉框切换推荐 / 历史 / 走势（双色球还有成绩单、筛选器）。
+- **新增六彩种**（侧栏按「福彩 / 体彩」分组）：快乐8（按「选十」推荐，数据保留每期 20 个开奖号）、
+  福彩3D、七乐彩、7星彩、排列3、排列5，每个彩种在「模块」下拉框里有推荐 / 历史数据两项。推荐支持
+  「统计打分」与「约束随机」，按各彩种的规则计算和值区间、奇偶比与奖金期望（单注 2 元），
+  抓取与重建数据集同样是增量 + 后台线程。
+- **超级大乐透**（侧栏「体彩」分组）：独立的抓取 / 推荐 / 历史 / 走势 ——
   「统计打分」与「约束随机」两种算法，约束涵盖前区和值、奇偶比、三区分布、连号、跨度、
   注间重号上限，并同样显示每注理由、一键复制；历史表格 2948 期（2007-05-30 起），
   走势页含前区频次、后区频次、前区和值走势，另附单注期望回报估算。
@@ -58,8 +76,10 @@
 
 | 文件 | 说明 |
 | --- | --- |
-| `RedBlueLab-v1.0-win64-folder.zip` | **推荐**。解压后双击 `RedBlueLab\RedBlueLab.exe`，启动最快、不写临时目录 |
+| `RedBlueLab-v2.0-win64-folder.zip` | **推荐**。解压后双击 `RedBlueLab\RedBlueLab.exe`，启动最快、不写临时目录 |
 | `RedBlueLab-onefile.exe` | 单文件版，首次启动要把自身解压到 `%LOCALAPPDATA%\RedBlueLab\tmp` |
+
+两个文件都是 v2.0 八彩种版本（双色球 / 快乐8 / 福彩3D / 七乐彩 / 超级大乐透 / 7星彩 / 排列3 / 排列5）。
 
 想自己构建就看下面的「方式二」与「方式三」。
 
@@ -71,8 +91,8 @@
 
 | 产物 | 说明 |
 | --- | --- |
-| `dist\RedBlueLab\RedBlueLab.exe` | **推荐**。文件夹版，双击即开，不写临时目录，启动最快；整个文件夹约 176 MB，移动时要连目录一起拷 |
-| `dist\RedBlueLab-onefile.exe` | 单文件版（67 MB），方便只传一个文件；每次启动把自身解压到 `%LOCALAPPDATA%\RedBlueLab\tmp`，首次会慢几秒 |
+| `dist\RedBlueLab\RedBlueLab.exe` | **推荐**。文件夹版，双击即开，不写临时目录，启动最快；整个文件夹约 192 MB，移动时要连目录一起拷 |
+| `dist\RedBlueLab-onefile.exe` | 单文件版（69 MB），方便只传一个文件；每次启动把自身解压到 `%LOCALAPPDATA%\RedBlueLab\tmp`，首次会慢几秒 |
 
 单文件版已把解压目录固定到 `%LOCALAPPDATA%\RedBlueLab\tmp`（不再依赖 `%TEMP%`）。如果这台机器连
 `%LOCALAPPDATA%` 都不可写（安全软件、组策略、便携环境），双击同目录的 `dist\单文件版启动.bat`，
@@ -172,6 +192,13 @@ main.py                  程序入口（python main.py 或打包后 exe）
 run.bat                  源码方式启动（优先 pythonw，不弹黑框）
 build_exe.ps1            PyInstaller 单文件打包脚本
 requirements.txt         运行依赖
+games/
+  spec.py                六个新彩种的规则描述（号码区间/注数/玩法/奖金说明）
+  fetch.py               福彩 findDrawNotice + 体彩 getHistoryPageListV1 双接口抓取
+  build.py               解析 → 派生列 → 校验 → 导出 CSV/JSON/XLSX
+  store.py               各彩种数据集与特征（频次/遗漏）
+  recommend.py           统计打分 / 约束随机 + 奖金期望
+  ui.py                  推荐 / 历史数据两类页面的通用实现
 dlt/
   fetch.py               体彩官网接口抓取（30 页缓存）
   build.py               解析 → 派生列 → 校验 → 导出 CSV/JSON/XLSX
@@ -188,7 +215,8 @@ ssq/
   core/ledger.py         推荐成绩单：存档、按期结算中奖、盈亏统计（picks.json）
   core/expand.py         复式/胆拖展开与输入解析
   core/universal.py      全部 1,107,568 注红球组合 + 条件筛选引擎
-  ui/main_window.py      Fluent 主窗口 + 导航
+  ui/main_window.py      Fluent 主窗口 + 导航（8 个彩种 + 设置）
+  ui/shell.py            彩种外壳：一个导航项 + 「模块」下拉框切换内部页面
   ui/widgets.py          号码球、注卡、数字输入框等自定义控件
   ui/pages/              推荐 / 成绩单 / 筛选器 / 历史数据 / 走势图 / 设置 六个页面
 tools/screenshot.py      无显示器环境下渲染各页面截图（界面自查）
@@ -197,6 +225,8 @@ tools/demo_ledger.py     生成一份演示用成绩单（截图/文档用，不
 tools/make_icon.py       生成 assets/app.ico（exe 图标）
 crawl_dlt.py             大乐透抓取命令行入口
 build_dlt_dataset.py     大乐透数据集重建入口
+crawl_games.py           其余六个彩种抓取入口（python -m games.fetch <key>）
+build_games_dataset.py   其余六个彩种数据集重建（python -m games.build <key>）
 assets/app.ico           应用图标
 docs/screenshots/        界面截图（README 与 release 用）
 LICENSE                  MIT 协议
@@ -239,6 +269,8 @@ python crawl_dlt.py                 # 抓取大乐透全部历史（30 页）
 python build_dlt_dataset.py         # 重建大乐透数据集
 python crawl_ssq.py --refresh       # 忽略缓存全量重抓
 python build_dataset.py             # 解析 + 校验 + 导出 CSV/JSON/Excel
+python -m games.fetch kl8           # 抓取某个新彩种（kl8/fc3d/qlc/qxc/pl3/pl5）
+python -m games.build kl8           # 重建该彩种数据集（也可用 crawl_games.py / build_games_dataset.py）
 python stats.py                     # 打印最新几期与汇总统计
 python check_new.py                 # 对比官网，列出尚未入库的新期
 ```
@@ -271,6 +303,28 @@ python check_new.py                 # 对比官网，列出尚未入库的新期
   六等 3+2（15）、七等 3+1 / 2+2 / 3+0 / 1+2 / 2+1 / 0+2（5）。
 - 全部组合 21,425,712 种；按历史奖金估算单注（2 元）期望回报约 0.94 元（返还率约 47%）。
 
+## 新增彩种数据（2026-11-22）
+
+| 彩种 | 期数 | 时间范围 | 玩法/号码 | 单注 | 组合数 | 期望回报 | 返还率 |
+| --- | ---: | --- | --- | ---: | ---: | ---: | ---: |
+| 快乐8 | 2,132 | 2020-10-28 起 | 80 选 20（按「选十」推荐） | 2 元 | 1,646,492,110,120 | 1.152 元 | 57.6% |
+| 福彩3D | 4,816 | 2013-01-02 起 | 3 位 0–9（直选） | 2 元 | 1,000 | 1.040 元 | 52.0% |
+| 七乐彩 | 2,093 | 2013-01-02 起 | 30 选 7 + 1 特别号 | 2 元 | 2,035,800 | 0.950 元 | 47.5% |
+| 7星彩 | 3,417 | 2004-05-21 起 | 前 6 位 0–9 + 第 7 位 0–14 | 2 元 | 15,000,000 | 0.984 元 | 49.2% |
+| 排列3 | 7,786 | 2004-11-14 起 | 3 位 0–9（直选） | 2 元 | 1,000 | 1.027 元 | 51.4% |
+| 排列5 | 7,786 | 2004-11-14 起 | 5 位 0–9 | 2 元 | 100,000 | 1.004 元 | 50.2% |
+
+- 数据来源：福彩三款走 `cwl.gov.cn` 的 `findDrawNotice`（`name=kl8|3d|qlc`），体彩三款走
+  `webapi.sporttery.cn` 的 `getHistoryPageListV1`（`gameNo=04|35|350133`），都是每分钟 1 次以内的
+  顺序请求，100 条/页，分页落盘缓存。
+- 期号规则：福彩 7 位（如 `2026134`）原样保留；体彩接口给 5 位（如 `26130`），统一补成 7 位。
+- **福彩三款同样只到 2013 年**（官网改版后只保留 2013 年及以后），快乐8 则是 2020-10-28 开售起全量；
+  体彩三款能拿到 2004 年的早期数据。
+- 数据源已知缺口（不是解析问题）：体彩销售额 2007–2016 段落为空；福彩3D 的 `prizegrades` 是各玩法
+  合计派奖，口径与单注奖金不同，期望值改按固定奖金（1040/1000）估算并标注「奖级估算」。
+- 校验：六个彩种的记录数 / 期号唯一 / 日期倒序 / 号码结构 / 销售金额五项全部通过
+  （排列3 有 1 处数据源日期笔误，校验允许 2,000 期里 1 处逆序）。
+
 ## 开源协议
 
 本项目使用 **MIT License**，版权归 [Urtaome0211](https://github.com/Urtaome0211) 所有：
@@ -293,6 +347,7 @@ Copyright (c) 2026 Urtaome0211
 
 ## 更新记录
 
+- **2026-11-22**：新增快乐8 / 福彩3D / 七乐彩 / 7星彩 / 排列3 / 排列5 六个彩种（抓取 + 数据集 + 推荐 + 历史数据页），侧栏重排为「福彩 / 体彩」两组，版本 v1.4.0（2026-11-22 起对外发布为 v2.0）。
 - 2026-11-16 增量抓取双色球 2026128～2026131 共 4 期（2085 → 2089 期）
 - 2026-11-16 应用改名为 **RedBlue Lab**（v1.3.0）：窗口标题、exe 名、图标（RB）、数据目录
   `%LOCALAPPDATA%\RedBlueLab` 一并更新；旧目录 `SSQAdvisor` 的数据首次启动自动迁移

@@ -119,7 +119,6 @@ class ChartPage(ScrollArea):
 
         ticks = [(i, str(issues[i])[4:]) for i in range(0, k, max(1, k // 8))]
         self.plot.getAxis("bottom").setTicks([ticks])
-        self.plot.setLabel("left", "红球和值")
         self.plot.setTitle(f"最近 {k} 期红球和值", color=TEXT, size="10pt")
         self.caption.setText(
             f"全量 {n} 期：均值 {fs.mean_sum:.1f}，标准差 {fs.std_sum:.1f}；"
@@ -142,7 +141,6 @@ class ChartPage(ScrollArea):
                                                      "movable": False}))
         self.plot.getAxis("bottom").setTicks(
             [[(i, f"{i:02d}") for i in range(1, RED_MAX + 1, 2)]])
-        self.plot.setLabel("left", "出现次数")
         self.plot.setTitle(f"红球出现次数（{fs.n} 期）", color=TEXT, size="10pt")
         top = int(np.argmax(counts)) + 1
         low = int(np.argmin(counts)) + 1
@@ -166,7 +164,6 @@ class ChartPage(ScrollArea):
                                           labelOpts={"position": 0.06, "color": CHART_RED,
                                                      "movable": False}))
         self.plot.getAxis("bottom").setTicks([[(i, f"{i:02d}") for i in range(1, BLUE_MAX + 1)]])
-        self.plot.setLabel("left", "出现次数")
         self.plot.setTitle(f"蓝球出现次数（{fs.n} 期）", color=TEXT, size="10pt")
         top = int(np.argmax(counts)) + 1
         low = int(np.argmin(counts)) + 1
@@ -183,7 +180,6 @@ class ChartPage(ScrollArea):
         self.plot.addItem(bars)
         self.plot.getAxis("bottom").setTicks(
             [[(i, f"{i:02d}") for i in range(1, RED_MAX + 1, 2)]])
-        self.plot.setLabel("left", "遗漏期数")
         self.plot.setTitle("红球当前遗漏（距最近一次开出）", color=TEXT, size="10pt")
         order = np.argsort(-om)[:3]
         text = "，".join(f"{int(i) + 1:02d} 号 {int(om[i])} 期" for i in order)

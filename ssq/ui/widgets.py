@@ -86,6 +86,7 @@ class TicketCard(CardWidget):
 
         meta = CaptionLabel(ticket.composition, self)
         meta.setStyleSheet("color:#8A8A8A;")
+        meta.setWordWrap(True)
         mid.addWidget(meta)
 
         extra = ticket.reason or ""

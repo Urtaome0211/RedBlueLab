@@ -204,8 +204,9 @@ class SettingsPage(ScrollArea):
         lay.setSpacing(6)
         lay.addWidget(StrongBodyLabel("关于", card))
         text = (
-            f"RedBlue Lab v{__version__}　双色球 + 超级大乐透分析助手\n"
-            "数据来源：中国福利彩票发行管理中心（2013 年至今）、中国体育彩票官网（2007 年至今）公开接口。\n"
+            f"RedBlue Lab v{__version__}　八彩种开奖数据分析助手\n"
+            "彩种：双色球、快乐8、福彩3D、七乐彩（福彩）；超级大乐透、7星彩、排列3、排列5（体彩）。\n"
+            "数据来源：中国福利彩票发行管理中心、中国体育彩票官网的公开接口。\n"
             "本软件仅做历史数据统计与组合生成，彩票开奖为独立随机事件，"
             "任何选号方法都不能提高中奖概率。请理性购彩、量力而行。"
         )
@@ -278,10 +279,23 @@ class SettingsPage(ScrollArea):
     def refresh_info(self) -> None:
         s = self.store.summary()
         if s["count"]:
-            self.data_label.setText(
-                f"共 {s['count']} 期：{s['first']} ~ {s['last']}，最近更新 {s['updated']}；"
-                f"文件 {paths.DATA_DIR / 'ssq_history.csv'}"
-            )
+            names = {"dlt": "大乐透", "kl8": "快乐8", "fc3d": "福彩3D", "qlc": "七乐彩",
+                     "qxc": "7星彩", "pl3": "排列3", "pl5": "排列5"}
+            others = []
+            for key, name in names.items():
+                f = paths.DATA_DIR / f"{key}_history.csv"
+                if not f.exists():
+                    continue
+                try:
+                    n = sum(1 for _ in f.open(encoding="utf-8-sig")) - 1
+                except OSError:
+                    continue
+                others.append(f"{name} {n}")
+            parts = [f"双色球 {s['count']} 期（{s['first']} ~ {s['last']}，"
+                     f"更新于 {s['updated']}）"]
+            if others:
+                parts.append("其他：" + " · ".join(others) + " 期")
+            self.data_label.setText("\n".join(parts))
         else:
             self.data_label.setText("尚未加载数据，请先在「推荐」页点击「抓取新开奖」。")
         self.path_label.setText(f"数据目录：{paths.DATA_DIR}")

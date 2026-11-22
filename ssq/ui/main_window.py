@@ -15,6 +15,8 @@ from .. import APP_TITLE, __version__, paths
 from dlt.recommend import DltParams
 from dlt.store import DltStore
 from dlt.ui import DltChartPage, DltDataPage, DltRecommendPage
+from games import spec as game_spec
+from games import ui as game_ui
 from ..config import load_params, save_params
 from ..core import ledger as ledger_mod
 from ..core.store import DataStore
@@ -24,6 +26,7 @@ from .pages.filter_page import FilterPage
 from .pages.ledger_page import LedgerPage
 from .pages.recommend_page import RecommendPage
 from .pages.settings_page import SettingsPage
+from .shell import GameShell
 
 
 def make_icon() -> QIcon:
@@ -63,30 +66,53 @@ class MainWindow(FluentWindow):
         self.chart_page = ChartPage(self.store, self)
         self.settings_page = SettingsPage(self.store, self.params, self)
 
+        # 新增彩种（快乐8 / 福彩3D / 七乐彩 / 7星彩 / 排列3 / 排列5）：每个两页
+        self.game_pages: dict[str, tuple[game_ui.RecommendPage, game_ui.DataPage]] = {}
+        for key in ("kl8", "fc3d", "qlc", "qxc", "pl3", "pl5"):
+            self.game_pages[key] = game_ui.create_pages(key)
+
         self.dlt_recommend_page = DltRecommendPage(self.dlt_store, self.dlt_params, self)
         self.dlt_data_page = DltDataPage(self.dlt_store, self)
         self.dlt_chart_page = DltChartPage(self.dlt_store, self)
 
-        nav = self.navigationInterface
-        nav.addItemHeader("双色球", NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.recommend_page, FIF.HOME, "推荐",
-                             NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.ledger_page, FIF.HISTORY, "成绩单",
-                             NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.filter_page, FIF.FILTER, "筛选器",
-                             NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.data_page, FIF.DOCUMENT, "历史数据",
-                             NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.chart_page, FIF.PIE_SINGLE, "走势图",
-                             NavigationItemPosition.SCROLL)
+        # 每个彩种一个导航项，页面内用「模块」下拉框切换
+        self.shells: dict[str, GameShell] = {}
+        self.ssq_shell = GameShell("双色球", [
+            ("推荐", self.recommend_page),
+            ("成绩单", self.ledger_page),
+            ("筛选器", self.filter_page),
+            ("历史", self.data_page),
+            ("走势", self.chart_page),
+        ], self)
+        self.shells["ssq"] = self.ssq_shell
 
-        nav.addItemHeader("大乐透", NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.dlt_recommend_page, FIF.GAME, "推荐",
+        self.dlt_shell = GameShell("超级大乐透", [
+            ("推荐", self.dlt_recommend_page),
+            ("历史", self.dlt_data_page),
+            ("走势", self.dlt_chart_page),
+        ], self)
+        self.shells["dlt"] = self.dlt_shell
+
+        for key in ("kl8", "fc3d", "qlc", "qxc", "pl3", "pl5"):
+            spec = game_spec.get(key)
+            rec_page, data_page = self.game_pages[key]
+            self.shells[key] = GameShell(spec.name, [("推荐", rec_page), ("历史", data_page)], self)
+            rec_page.dataChanged.connect(self._on_game_data_changed)
+
+        nav = self.navigationInterface
+        nav.addItemHeader("福彩", NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.ssq_shell, FIF.HOME, "双色球",
                              NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.dlt_data_page, FIF.DOCUMENT, "历史数据",
+        for key in ("kl8", "fc3d", "qlc"):
+            self.addSubInterface(self.shells[key], FIF.GAME, game_spec.get(key).name,
+                                 NavigationItemPosition.SCROLL)
+
+        nav.addItemHeader("体彩", NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.dlt_shell, FIF.GAME, "超级大乐透",
                              NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.dlt_chart_page, FIF.PIE_SINGLE, "走势图",
-                             NavigationItemPosition.SCROLL)
+        for key in ("qxc", "pl3", "pl5"):
+            self.addSubInterface(self.shells[key], FIF.GAME, game_spec.get(key).name,
+                                 NavigationItemPosition.SCROLL)
 
         self.addSubInterface(self.settings_page, FIF.SETTING, "设置",
                              NavigationItemPosition.BOTTOM)
@@ -107,6 +133,7 @@ class MainWindow(FluentWindow):
             self.recommend_page.generate(auto=True)
         if self.dlt_store.available:
             self.dlt_recommend_page.generate()
+        # 这些页面在构造时已经生成过推荐，这里不再重复触发
 
     def _on_data_changed(self) -> None:
         self.data_page.reload()
@@ -118,6 +145,10 @@ class MainWindow(FluentWindow):
             pass
         self.ledger_page.reload()
         self.filter_page.schedule()
+
+    def _on_game_data_changed(self) -> None:
+        for rec_page, data_page in self.game_pages.values():
+            data_page.reload()
 
     def _on_dlt_data_changed(self) -> None:
         self.dlt_data_page.reload()
@@ -131,9 +162,19 @@ class MainWindow(FluentWindow):
         self.shutdown()
         super().closeEvent(event)
 
+    def show_page(self, widget) -> bool:
+        """切到某个页面所在的彩种 + 模块（截图脚本 / 自检用）。"""
+        for shell in self.shells.values():
+            if shell.show_page(widget):
+                self.switchTo(shell)
+                return True
+        self.switchTo(widget)   # 不在任何彩种外壳里的页面（如设置）
+        return True
+
     def shutdown(self) -> None:
         workers = [self.recommend_page.worker, self.recommend_page.gen_worker,
-                   self.filter_page.worker, self.dlt_recommend_page.worker]
+                   self.filter_page.worker, self.dlt_recommend_page.worker,
+                   *[rec.worker for rec, _ in self.game_pages.values()]]
         for worker in workers:
             if worker is not None and worker.isRunning():
                 worker.quit()

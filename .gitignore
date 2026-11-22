@@ -26,3 +26,7 @@ data/*.json
 data/*.xlsx
 data/raw/
 data/dlt_raw/
+data/*_raw/
+.probe_*
+.upload_url.txt
+.release_body.md

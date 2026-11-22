@@ -65,7 +65,7 @@ def main() -> int:
         ("04_settings", window.settings_page),
     ]
     for name, page in pages:
-        window.stackedWidget.setCurrentWidget(page)
+        window.show_page(page)
         pump(app, 0.45)
         path = out / f"{name}.png"
         window.grab().save(str(path))
@@ -74,7 +74,7 @@ def main() -> int:
     # 走势图另外三张
     for key, name in (("red", "05_chart_red"), ("blue", "06_chart_blue"),
                       ("omit", "07_chart_omit")):
-        window.stackedWidget.setCurrentWidget(window.chart_page)
+        window.show_page(window.chart_page)
         window.chart_page.select(key)
         pump(app, 0.35)
         path = out / f"{name}.png"
@@ -83,7 +83,7 @@ def main() -> int:
 
     # 成绩单
     window.ledger_page.reload()
-    window.stackedWidget.setCurrentWidget(window.ledger_page)
+    window.show_page(window.ledger_page)
     pump(app, 0.45)
     path = out / "08_ledger.png"
     window.grab().save(str(path))
@@ -91,7 +91,7 @@ def main() -> int:
 
     # 筛选器（先生成几注，才有号码卡可看）
     window.filter_page.sample_tickets()
-    window.stackedWidget.setCurrentWidget(window.filter_page)
+    window.show_page(window.filter_page)
     pump(app, 0.45)
     path = out / "09_filter.png"
     window.grab().save(str(path))
@@ -104,19 +104,29 @@ def main() -> int:
         ("12_dlt_chart", window.dlt_chart_page),
     ]
     for name, page in dlt_pages:
-        window.stackedWidget.setCurrentWidget(page)
+        window.show_page(page)
         pump(app, 0.45)
         path = out / f"{name}.png"
         window.grab().save(str(path))
         print(f"saved {path}")
 
     for key, name in (("back", "13_dlt_chart_back"), ("sum", "14_dlt_chart_sum")):
-        window.stackedWidget.setCurrentWidget(window.dlt_chart_page)
+        window.show_page(window.dlt_chart_page)
         window.dlt_chart_page.select(key)
         pump(app, 0.35)
         path = out / f"{name}.png"
         window.grab().save(str(path))
         print(f"saved {path}")
+
+    # 新增彩种：推荐 + 历史（快乐8 / 福彩3D / 七乐彩 / 7星彩 / 排列3 / 排列5）
+    for i, key in enumerate(("kl8", "fc3d", "qlc", "qxc", "pl3", "pl5"), start=15):
+        rec_page, data_page = window.game_pages[key]
+        for suffix, page in (("rec", rec_page), ("data", data_page)):
+            window.show_page(page)
+            pump(app, 0.45)
+            path = out / f"{i:02d}_{key}_{suffix}.png"
+            window.grab().save(str(path))
+            print(f"saved {path}")
 
     window.shutdown()
     return 0

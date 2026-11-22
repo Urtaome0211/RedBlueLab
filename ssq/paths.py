@@ -16,6 +16,9 @@ from pathlib import Path
 APP_NAME = "RedBlueLab"
 LEGACY_APP_NAME = "SSQAdvisor"
 
+# 除双色球/大乐透之外的彩种（数据集与分页缓存都按 <key>_* 命名）
+EXTRA_GAMES = ("kl8", "fc3d", "qlc", "qxc", "pl3", "pl5")
+
 
 def is_frozen() -> bool:
     """是否运行在 PyInstaller 打包的 exe 里。"""
@@ -114,4 +117,19 @@ def ensure_data_dir() -> Path:
         if seed_dlt_raw.is_dir():
             for src in seed_dlt_raw.glob("page_*.json"):
                 shutil.copyfile(src, dlt_raw / src.name)
+
+    # 快乐8 / 福彩3D / 七乐彩 / 7星彩 / 排列3 / 排列5
+    for key in EXTRA_GAMES:
+        csv_path = DATA_DIR / f"{key}_history.csv"
+        if not csv_path.exists():
+            seed_csv = resource_root() / "seed" / f"{key}_history.csv"
+            if seed_csv.exists():
+                shutil.copyfile(seed_csv, csv_path)
+        raw = DATA_DIR / f"{key}_raw"
+        raw.mkdir(parents=True, exist_ok=True)
+        if not any(raw.glob("page_*.json")):
+            seed_raw = resource_root() / "seed" / f"{key}_raw"
+            if seed_raw.is_dir():
+                for src in seed_raw.glob("page_*.json"):
+                    shutil.copyfile(src, raw / src.name)
     return DATA_DIR

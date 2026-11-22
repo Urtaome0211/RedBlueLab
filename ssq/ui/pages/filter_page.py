@@ -63,7 +63,7 @@ class FilterPage(ScrollArea):
     # ------------------------------------------------ 左侧表单
     def _build_form(self) -> CardWidget:
         card = CardWidget(self.view)
-        card.setFixedWidth(470)
+        card.setFixedWidth(440)
         card.setBorderRadius(10)
         lay = QVBoxLayout(card)
         lay.setContentsMargins(20, 16, 20, 16)
@@ -176,6 +176,7 @@ class FilterPage(ScrollArea):
 
         head = QHBoxLayout()
         self.tickets_title = muted("按当前条件随机生成的号码", self.view)
+        self.tickets_title.setWordWrap(True)
         head.addWidget(self.tickets_title)
         head.addStretch(1)
         self.copy_btn = PushButton(FIF.COPY, "复制", self.view)
@@ -273,7 +274,7 @@ class FilterPage(ScrollArea):
                                                      show_blue=False, parent=self.view))
         self.copy_btn.setEnabled(True)
         self.tickets_title.setText(
-            f"按当前条件随机生成的 {len(self.tickets)} 注红球（蓝球自己选 1–16，也可以先在「推荐」页生成整注）")
+            f"按当前条件随机生成 {len(self.tickets)} 注红球（蓝球自己选 1–16）")
 
     def copy_tickets(self) -> None:
         if not self.tickets:

@@ -21,6 +21,8 @@ from PySide6.QtTest import QTest  # noqa: E402
 from PySide6.QtWidgets import QApplication  # noqa: E402
 
 from ssq.core import universal  # noqa: E402
+from games import recommend as R  # noqa: E402
+from games.store import GameStore  # noqa: E402
 from ssq.ui.main_window import MainWindow  # noqa: E402
 
 FAILED: list[str] = []
@@ -227,6 +229,30 @@ def main() -> int:
         pump(60 / 1000)
         check(win.dlt_chart_page.segment.currentRouteKey() == key,
               f"大乐透走势图切换到 {key}")
+
+    # ------------------------------------------------ 新增六彩种
+    print("\n[新增彩种] 快乐8 / 福彩3D / 七乐彩 / 7星彩 / 排列3 / 排列5")
+    for key in ("kl8", "fc3d", "qlc", "qxc", "pl3", "pl5"):
+        store = GameStore(key)
+        sp = store.spec
+        check(store.count > 1000, f"{sp.short} 数据集已加载：{store.count} 期")
+        draw = store.latest()
+        check(draw is not None and all(len(g) == z.count for g, z in zip(draw.groups, sp.zones)),
+              f"{sp.short} 最新一期号码结构正确（{draw.text(sp) if draw else '-'}）")
+        ev = R.expected_value(store)
+        check(0.3 < ev["return_rate"] < 0.9, f"{sp.short} 估算返还率 {ev['return_rate']:.1%}")
+        for kind in ("stats", "random"):
+            tickets = R.recommend(store, kind=kind, params=R.RecParams(n_tickets=5, seed=3))
+            check(len(tickets) == 5, f"{sp.short}·{kind} 生成 5 注")
+            ok = all(all(zone.lo <= n <= zone.hi for zone, g in zip(sp.zones, t.groups)
+                         for n in g) for t in tickets)
+            check(ok, f"{sp.short}·{kind} 号码都在合法区间")
+            check(all(len(g) == want for t in tickets
+                      for g, want in zip(t.groups, sp.ticket)), f"{sp.short}·{kind} 各位置号码个数正确")
+        rec_page, data_page = win.game_pages[key]
+        check(len(rec_page.last_info.get("tickets", [])) == 5, f"{sp.short} 推荐页生成 5 注")
+        check(rec_page.tickets_box.count() == 5, f"{sp.short} 推荐卡片渲染 5 张")
+        check(data_page.table.model().rowCount() == 100, f"{sp.short} 表格行数 100")
 
     print()
     if backup is not None:
